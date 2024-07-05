@@ -7,6 +7,10 @@
 
 - [Building](#building-🧰)
 
+- [Alternative besides Jenkins and GitHub Actions](#alternatives-beside-jenkins-and-github-actions)
+
+- [Self-hosted or cloud-base?](#would-the-alternative-ci-setup-be-better-in-a-self-hosted-or-cloud-based-environment)
+
 ## Linter ✍️
 
 Building a Django web application that goes through a CI/CD process requires a linter that can also run along with tests when pushing/pulling to our GitHub remote repo, a very good example is using the flake8 linter, we can integrate it into our project using the command:
@@ -59,7 +63,7 @@ The yaml configuration file makes sure our linter(which in this case is flake8) 
 
 ## Alternatives Beside Jenkins and GitHub Actions
 
-TravisCI is an alternative cloud based CI/CD service that can be integrated with GitHub, it supports Python and Django. 
+TravisCI is an alternative cloud based CI/CD service that can be integrated with GitHub, it supports Python and Django.
 The configuration is also similar to setting up a Github action where we'll create a yaml file that sets up a testing, linting pipeline that has to be ran before our code is merged to our main branch.
 
 ## Would the alternative CI setup be better in a self-hosted or cloud based environment?
