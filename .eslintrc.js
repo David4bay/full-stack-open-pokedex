@@ -3,7 +3,6 @@ module.exports = {
     "browser": true,
     "es6": true,
     "jest/globals": true,
-    "es2021": true,
     "node": true
   },
   "extends": [
