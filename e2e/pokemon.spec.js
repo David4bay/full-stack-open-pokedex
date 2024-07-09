@@ -8,7 +8,8 @@ describe('Pokedex', () => {
   })
 
   test('can navigate to a single pokemon', async ({ page }) => {
-    await page.goto('http://127.0.0.1:8080/pokemon/ivysaur')
-    await expect(page.getByText('ivysaur')).toBeVisible()
+    await page.goto('http://127.0.0.1:8080/')
+    await page.goto('http://127.0.0.1:8080/pokemon/ivysaur/')
+    await expect(page.getByText('chlorophyll')).toBeVisible()
   })
 })
