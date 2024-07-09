@@ -6,4 +6,9 @@ describe('Pokedex', () => {
     await expect(page.getByText('ivysaur')).toBeVisible()
     await expect(page.getByText('Pokémon and Pokémon character names are trademarks of Nintendo.')).toBeVisible()
   })
+
+  test('can navigate to a single pokemon', async ({ page }) => {
+    await page.goto('http://127.0.0.1:8080/pokemon/ivysaur')
+    await expect(page.getByText('ivysaur')).toBeVisible()
+  })
 })
