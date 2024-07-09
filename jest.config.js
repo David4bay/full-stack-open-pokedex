@@ -1,5 +1,5 @@
 module.exports = {
     // other Jest config options
-    testPathIgnorePatterns: ['/node_modules/', '/e2e/', 'tests'],
+    testPathIgnorePatterns: ['/node_modules/', '/e2e/', 'tests', 'dist'],
   };
   
