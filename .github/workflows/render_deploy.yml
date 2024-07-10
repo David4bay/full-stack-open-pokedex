@@ -2,15 +2,14 @@ name: My Render Deployment
 
 on:
   push: 
-   branches: [master]
+    branches: [master]
   pull_request: 
-   branches: [master]
+    branches: [master]
 
 jobs:
   render_deployment_pipeline:
-      runs-on: ubuntu-20.04
-      steps:
-        - uses: glarivie/render-deploy-service-action@v1.0.5
-          with:
-            serviceId: ${{ secrets.RENDER_SERVICE_ID }}
-            apiKey: ${{ secrets.RENDER_API_KEY }}
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Trigger deployment
+        run: curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_API_KEY }}
