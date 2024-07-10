@@ -2,5 +2,5 @@
 
 echo "Build script"
 npm install --legacy-peer-deps
-npm run Build
+npm run build
 node app.js
