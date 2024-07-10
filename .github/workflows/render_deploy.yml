@@ -1,0 +1,16 @@
+name: My Render Deployment
+
+on:
+  push: 
+   branches: [master]
+  pull_request: 
+   branches: [master]
+
+jobs:
+  render_deployment_pipeline:
+      runs-on: ubuntu-20.04
+      steps:
+        - uses: glarivie/render-deploy-service-action@v1.0.5
+          with:
+            serviceId: ${{ secrets.RENDER_SERVICE_ID }}
+            apiKey: ${{ secrets.RENDER_API_KEY }}
