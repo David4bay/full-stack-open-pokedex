@@ -1,36 +1,69 @@
-name: Playwright Tests
+name: Deployment pipeline
+
 on:
   push:
-    branches: [ main, master ]
+    branches:
+      - main
   pull_request:
-    branches: [ main, master ]
+    branches: [main]
     types: [opened, synchronize]
+
 jobs:
-  test:
-    timeout-minutes: 60
-    runs-on: ubuntu-latest
+  simple_deployment_pipeline:
+    runs-on: ubuntu-20.04
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 16
-    - name: Install dependencies
-      run: npm ci --legacy-peer-deps
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
-    - name: Build app
-      run: npm run build
-    - name: Run Jest tests
-      run: npm test
-    - name: Run Playwright tests
-      run: npm run test:e2e
-    - uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: playwright-report
-        path: playwright-report/
-        retention-days: 30
-    - name: Github Tag Bump
-      uses: anothrNick/github-tag-action@1.70.0
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 16
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+      - name: Build app
+        run: npm run build
+      - name: Run Jest tests
+        run: npm test
+      - name: Run Playwright tests
+        run: npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+      - name: github context
+        id: context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+      - name: commit messages
+        id: commit_messages
+        env:
+          COMMITS: ${{ toJson(github.event.commits) }}
+        run: echo "$COMMITS"
+
+  tag_release:
+    needs: [simple_deployment_pipeline]
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Check if commit message contains #skip
+        id: check_skip
+        run: |
+          if echo "${{ needs.simple_deployment_pipeline.outputs.commit_messages }}" | grep -q "#skip"; then
+            echo "::set-output name=skip::true"
+          else
+            echo "::set-output name=skip::false"
+          fi
+      - name: Github Tag Bump
+        if: ${{ steps.check_skip.outputs.skip != 'true' && github.event_name == 'push' }}
+        uses: anothrNick/github-tag-action@1.70.0
+        with:
+          DEFAULT_BUMP: patch
+          WITH_V: true
+          DEFAULT_BRANCH: "main"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_PREFIX: ""
+          DEFAULT_SUFFIX: ""
+          RELEASE_BRANCHES: main
+          VERBOSE: true

@@ -3,9 +3,6 @@ name: My Render Deployment
 on:
   push: 
     branches: [master]
-  pull_request: 
-    branches: [master]
-    types: [opened, synchronize]
 jobs:
   render_deployment_pipeline:
     if: ${{ github.event_name == 'push' }}
