@@ -5,9 +5,10 @@ on:
     branches: [master]
   pull_request: 
     branches: [master]
-
+    types: [opened, synchronize]
 jobs:
   render_deployment_pipeline:
+    if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-20.04
 
     steps:
