@@ -1,0 +1,13 @@
+name: Ping Health Check
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  ping-health-check:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Check health
+        run: curl -s -o /dev/null -w "%{http_code}" ${{ secrets.RENDER_URL }}

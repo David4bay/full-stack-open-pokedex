@@ -1,0 +1,40 @@
+name: Deployment Pipeline
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches: [ 'main', 'master' ]
+    types: [opened, synchronize]
+jobs:
+ discord_webhook_pipeline:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '16'
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+      - name: Test Success
+        uses: rjstone/discord-webhook-notify@v1
+        if: ${{ success() && github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
+        with:
+          severity: info
+          details: 'A new version of Pokedex deployed to [https://full-stack-open-pokedex-n0sx.onrender.com/](https://full-stack-open-pokedex-n0sx.onrender.com/) by ${{ github.actor }}'
+          description: |
+            Build or tests passed.
+            Commit: https://github.com/${{ github.repository }}/commit/${{ github.sha }}
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+      - name: Test Failure
+        uses: rjstone/discord-webhook-notify@v1
+        if: ${{ failure() && github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
+        with:
+          severity: error
+          details: |
+            **commit** [${{github.event.head_commit.id}}](${{ github.event.head_commit.url}}) by ${{ github.actor }} broke the build :(
+          description: |
+            Build or tests failed.
+            Commit: https://github.com/${{ github.repository }}/commit/${{ github.sha }}
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
